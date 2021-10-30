@@ -1,33 +1,32 @@
 package com.alok328.SpringAPI.model;
 
+import com.alok328.SpringAPI.util.SlotUtil;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Document
+@Document("slots")
 public class Slot {
     @Id
     private String id;
     private LocalDate date;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private String band;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
+    private String bandName;
 
-    public Slot(LocalDate date, LocalDateTime startTime, LocalDateTime endTime, String band) {
+    public Slot() {
+        this.id = SlotUtil.generateUniqueId();
+    }
+
+    public Slot(LocalDate date, LocalDateTime startDateTime, LocalDateTime endDateTime, String bandName) {
+        this();
         this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.band = band;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.bandName = bandName;
     }
 
     public LocalDate getDate() {
@@ -38,27 +37,35 @@ public class Slot {
         this.date = date;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public String getId() {
+        return id;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public String getBand() {
-        return band;
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setBand(String band) {
-        this.band = band;
+    public void setEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    public String getBandName() {
+        return bandName;
+    }
+
+    public void setBandName(String bandName) {
+        this.bandName = bandName;
     }
 }

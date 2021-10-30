@@ -1,0 +1,8 @@
+server:
+  port: 9000
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://alok328:alok328@aloraj-cluster.n9r6m.mongodb.net/slotsAPI?retryWrites=true&w=majority
+      database: slotsAPI
