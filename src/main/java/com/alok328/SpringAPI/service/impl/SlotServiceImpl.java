@@ -10,10 +10,15 @@ import com.alok328.SpringAPI.service.SlotService;
 import com.alok328.SpringAPI.service.helper.Interval;
 import com.alok328.SpringAPI.service.helper.IntervalHelper;
 import com.alok328.SpringAPI.util.DateTimeUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +67,7 @@ public class SlotServiceImpl implements SlotService {
   private void validateNoOverlap(Slot slot) {
     List<Slot> slots = slotRepository.findByDate(slot.getDate());
     if (slots.stream().anyMatch(s -> (slot.getStartDateTime().isEqual(s.getStartDateTime()) && slot.getEndDateTime().isEqual(s.getEndDateTime())))) {
-      throw new SlotException(HttpStatus.CONFLICT, "Slot already occupied between: " + slot.getStartDateTime() + " & " + slot.getEndDateTime());
+      throw new SlotException(HttpStatus.CONFLICT, "Slots occupied for requested range: " + createRangeString(new Interval(slot.getStartDateTime(), slot.getEndDateTime())));
     }
 
     List<Interval> intervals = slots.stream().map(s -> new Interval(s.getStartDateTime(), s.getEndDateTime())).collect(Collectors.toList());
@@ -88,14 +93,30 @@ public class SlotServiceImpl implements SlotService {
 //                )
 //            ).collect(Collectors.toList());
     if (overlappingIntervals.size() > 0) {
-      List<String> occupiedSlots = overlappingIntervals.stream().map(i -> i.getStartDateTime().toString() + " " + i.getEndDateTime().toString()).collect(Collectors.toList());
+      List<String> occupiedSlots = overlappingIntervals.stream().map(this::createRangeString).collect(Collectors.toList());
       throw new SlotException(HttpStatus.CONFLICT, "Slots occupied for requested range: " + occupiedSlots);
     }
+  }
+
+  private String createRangeString(Interval i) {
+    String startTime = i.getStartDateTime().toLocalTime().format(DateTimeFormatter.ofPattern(Constants.TIME_FORMAT));
+    String endTime = i.getEndDateTime().toLocalTime().format(DateTimeFormatter.ofPattern(Constants.TIME_FORMAT));
+    String date = i.getStartDateTime().toLocalDate().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+    return StringUtils.joinWith(" ", date, startTime, endTime);
   }
 
   private void validateSlotStartTimeBeforeEndTime(Slot slot) {
     if (slot.getStartDateTime().isAfter(slot.getEndDateTime())) {
       throw new SlotException(HttpStatus.BAD_REQUEST, "Start time must be before endTime");
+    }
+    if(slot.getStartDateTime().isBefore(LocalDateTime.now())){
+      throw new SlotException(HttpStatus.BAD_REQUEST, "Start time for slot must be after current time");
+    }
+    if(Duration.between(slot.getStartDateTime(), slot.getEndDateTime()).toMinutes()<Constants.MIN_SLOT_DURATION){
+      throw new SlotException(HttpStatus.BAD_REQUEST, "Slot duration must be at least 30 minutes");
+    }
+    if(Duration.between(slot.getStartDateTime(), slot.getEndDateTime()).toMinutes()>Constants.MAX_SLOT_DURATION){
+      throw new SlotException(HttpStatus.BAD_REQUEST, "Slot duration must be less than 2 hours");
     }
   }
 
