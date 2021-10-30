@@ -23,15 +23,6 @@ public class RequestValidator {
     DateTimeUtil.validateTimeInput(slotRequest.getEndTime());
   }
 
-  private static void validateTimeFormat(String time) {
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-    try {
-      timeFormat.parse(time);
-    } catch (ParseException e) {
-      throw new SlotException(HttpStatus.BAD_REQUEST, "Invalid Time Format, required format: HH:mm");
-    }
-  }
-
   public static void validateRequestParamsForGetSlots(Map<String, String> reqParams) {
     if(reqParams.size()==0){
       return;

@@ -24,7 +24,7 @@ public class DateTimeUtil {
     try{
       DateTimeUtil.parseTimeFromPattern(time);
     } catch (IllegalArgumentException e){
-      throw new SlotException(HttpStatus.BAD_REQUEST, "Invalid Date format");
+      throw new SlotException(HttpStatus.BAD_REQUEST, "Invalid Time format");
     }
   }
 
