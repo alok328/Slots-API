@@ -5,4 +5,4 @@ spring:
   data:
     mongodb:
       uri:
-      database: slotsAPI
+      database:
