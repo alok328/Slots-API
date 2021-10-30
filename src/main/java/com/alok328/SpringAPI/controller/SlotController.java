@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/api/slot")
 @RestController
@@ -27,8 +28,9 @@ public class SlotController {
     }
 
     @GetMapping
-    public List<SlotResponse> getSlots(){
-        return slotService.getSlots();
+    public List<SlotResponse> getSlots(@RequestParam(required = false) Map<String, String> reqParams){
+        RequestValidator.validateRequestParamsForGetSlots(reqParams);
+        return slotService.getSlots(reqParams);
     }
 
     @DeleteMapping

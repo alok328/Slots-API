@@ -1,7 +1,6 @@
 package com.alok328.SpringAPI.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.http.HttpStatus;
 
 public class Error {
 

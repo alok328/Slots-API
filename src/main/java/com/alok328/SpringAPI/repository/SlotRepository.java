@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface SlotRepository extends MongoRepository<Slot, String> {
     List<Slot> findByDate(LocalDate date);
+    List<Slot> findByDateAndBandName(LocalDate date, String bandName);
 }

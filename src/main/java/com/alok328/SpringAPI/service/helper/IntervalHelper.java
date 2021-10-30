@@ -10,6 +10,9 @@ public class IntervalHelper {
 
   public static List<Interval> mergeIntervals(List<Interval> intervals){
     List<Interval> merged = new ArrayList<>();
+    if(intervals.size()==0){
+      return merged;
+    }
     intervals.sort(Comparator.comparing(Interval::getStartDateTime));
     Interval prevInterval = intervals.get(0);
     for(int i=1; i<intervals.size(); i++){

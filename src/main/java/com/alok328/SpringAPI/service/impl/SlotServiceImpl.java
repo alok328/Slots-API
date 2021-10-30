@@ -1,5 +1,6 @@
 package com.alok328.SpringAPI.service.impl;
 
+import com.alok328.SpringAPI.common.Constants;
 import com.alok328.SpringAPI.exception.SlotException;
 import com.alok328.SpringAPI.model.Slot;
 import com.alok328.SpringAPI.model.mapper.ModelMapper;
@@ -8,13 +9,13 @@ import com.alok328.SpringAPI.repository.SlotRepository;
 import com.alok328.SpringAPI.service.SlotService;
 import com.alok328.SpringAPI.service.helper.Interval;
 import com.alok328.SpringAPI.service.helper.IntervalHelper;
+import com.alok328.SpringAPI.util.DateTimeUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,8 +46,17 @@ public class SlotServiceImpl implements SlotService {
   }
 
   @Override
-  public List<SlotResponse> getSlots() {
-    return ModelMapper.mapAllSlotsToSlotResponses(slotRepository.findAll());
+  public List<SlotResponse> getSlots(Map<String, String> reqParams) {
+    if(reqParams.size()==0){
+      return ModelMapper.mapAllSlotsToSlotResponses(slotRepository.findByDate(LocalDate.now()));
+    }
+    if(reqParams.containsKey(Constants.QUERY_PARAM_BAND_NAME) && reqParams.containsKey(Constants.QUERY_PARAM_DATE)){
+      return ModelMapper
+          .mapAllSlotsToSlotResponses(slotRepository.findByDateAndBandName(
+              DateTimeUtil.parseDateFromString(reqParams.get(Constants.QUERY_PARAM_DATE)),
+              reqParams.get(Constants.QUERY_PARAM_BAND_NAME)));
+    }
+    return ModelMapper.mapAllSlotsToSlotResponses(slotRepository.findByDate(DateTimeUtil.parseDateFromString(reqParams.get(Constants.QUERY_PARAM_DATE))));
   }
 
   private void validateNoOverlap(Slot slot) {

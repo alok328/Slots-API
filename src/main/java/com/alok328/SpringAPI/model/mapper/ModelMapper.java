@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,6 @@ public class ModelMapper {
   }
 
   public static List<SlotResponse> mapAllSlotsToSlotResponses(List<Slot> slots) {
-    return slots.stream().map(ModelMapper::mapSlotToSlotResponse).collect(Collectors.toList());
+    return slots.stream().map(ModelMapper::mapSlotToSlotResponse).sorted(Comparator.comparing(SlotResponse::getStartDateTime)).collect(Collectors.toList());
   }
 }
